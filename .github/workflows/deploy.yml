@@ -3,7 +3,7 @@ name: Deploy Django App to AWS Swarm
 on:
   push:
     branches:
-      - ITB735 # 
+      - ITB735 
 
 jobs:
   deploy:
