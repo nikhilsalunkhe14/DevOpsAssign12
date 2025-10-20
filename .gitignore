@@ -1,0 +1,13 @@
+django_app/venv/
+__pycache__/
+*.pyc
+db.sqlite3
+*.log
+.DS_Store
+terraform.tfstate
+terraform.tfstate.backup
+terraform-key.pem # If you generated one with Terraform earlier
+*.pem # Generally ignore private keys!
+project.tar.gz # Ignore the archive file
+project.tar.gz
+.terraform/

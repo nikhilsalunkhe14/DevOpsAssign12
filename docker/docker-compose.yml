@@ -1,0 +1,48 @@
+# docker/docker-compose.yml
+
+version: '3.8'
+
+services:
+  web:
+    # This tells Swarm to build the image using our Dockerfile
+    # It will then be named 'django-app:latest'
+    image: django-app:latest
+    build:
+      context: ..  # Look for the Dockerfile in the parent directory
+      dockerfile: docker/Dockerfile
+    ports:
+      - "80:8000" # Map port 80 (public) to port 8000 (container)
+    environment:
+      # These are the environment variables our settings.py needs
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_HOST=db
+    depends_on:
+      - db
+    networks:
+      - app-network
+    deploy:
+      replicas: 2 # Run 2 copies of the app as required
+      placement:
+        constraints:
+          - node.role ==manager
+
+  db:
+    image: postgres:16
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    networks:
+      - app-network
+
+volumes:
+  db_data: # This persists our database data
+
+networks:
+  app-network: # This lets 'web' and 'db' talk to each other
+    driver: overlay
+
+#docker swarm join --token SWMTKN-1-6bpferlwul61w9jl3snsiof7h5d0ziymif62kx7uhon9aa7ubz-5j1y3yocf63r4oj77ng7xcjai 172.31.24.151:2377

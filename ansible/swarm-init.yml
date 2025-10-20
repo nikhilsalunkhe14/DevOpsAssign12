@@ -1,0 +1,16 @@
+---
+- name: Initialize the Swarm Manager
+  hosts: manager
+  become: yes
+  tasks:
+    - name: Initialize Docker Swarm
+      command: docker swarm init --advertise-addr {{ ansible_host }}
+      register: swarm_init_result
+      ignore_errors: yes # In case it's already initialized
+
+    - name: Get the worker join token
+      command: docker swarm join-token -q worker
+      register: swarm_worker_token
+      when: "'This node is already part of a swarm' not in swarm_init_result.stderr"
+
+# docker swarm join --token SWMTKN-1-0t5pzxmd0vnt297awkjvd6bwyc37ygbwcnm71hw3jz8ufbc809-5exyony6fpu4ngu29hwkpg7xq 54.92.129.104:2377ssh -i ~/.ssh/ubuntupass.pem ubuntu@98.88.217.134
